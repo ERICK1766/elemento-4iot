@@ -1,0 +1,58 @@
+@startuml
+class ESP32Controller {
+    - ssid: string
+    - password: string
+    - mqttHandler: MQTTClientHandler
+    --
+    + connectToWiFi(): void
+    + setup(): void
+    + loop(): void
+}
+
+class MQTTClientHandler {
+    - client: PubSubClient
+    - brokerHost: string
+    - brokerPort: int
+    - updateTopic: string
+    - subscribeTopic: string
+    --
+    + connect(): void
+    + publish(topic: string, message: string): void
+    + subscribe(topic: string): void
+    + setCallback(callback: function): void
+}
+
+abstract class Sensor {
+    - pin: int
+    --
+    + read(): float
+}
+
+class UltrasonicSensor extends Sensor {
+    - triggerPin: int
+    - echoPin: int
+    --
+    + readDistance(): float
+}
+
+class MQ2Sensor extends Sensor {
+    - analogPin: int
+    --
+    + readGasValue(): int
+    + readGasVoltage(): float
+}
+
+class ServoController {
+    - servoPin: int
+    - servo: Servo
+    --
+    + liftServo(): void
+    + lowerServo(): void
+}
+
+ESP32Controller *-- MQTTClientHandler
+ESP32Controller --> UltrasonicSensor
+ESP32Controller --> MQ2Sensor
+ESP32Controller --> ServoController
+
+@enduml
